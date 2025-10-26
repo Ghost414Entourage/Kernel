@@ -14,6 +14,8 @@ sudo apt install libzstd-dev liblz4-dev libssl-dev libcrypto++-dev
 
 
 
+
+
 You can check available kernel versions in your system's repositories with the following command: 
 
 apt-cache search linux-image
@@ -157,6 +159,52 @@ grep CONFIG_SYSTEM_ .config
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+make -j1 2>&1 | tee build.log
+grep -i "error:" build.log | head -20
+
+
+scripts/config --disable BCACHEFS_FS
+make clean && make -j$(nproc)
+
+
+
+sed -i '/CONFIG_SYSTEM_TRUSTED_KEYS/d' .config
+sed -i '/CONFIG_SYSTEM_REVOCATION_KEYS/d' .config
+
+
+
+
+scripts/config --disable SYSTEM_TRUSTED_KEYS
+scripts/config --disable SYSTEM_TRUSTED_KEYRING
+scripts/config --disable SYSTEM_REVOCATION_KEYS
+scripts/config --disable SYSTEM_REVOCATION_LIST
+scripts/config --disable SYSTEM_BLACKLIST_KEYRING
+scripts/config --disable SYSTEM_EXTRA_CERTIFICATE
+scripts/config --disable MODULE_SIG
+scripts/config --disable MODULE_SIG_ALL
+
+
+grep CONFIG_SYSTEM_ .config
+
+
+
+
+
+# Completely disable the trusted keyring infrastructure
+scripts/config --disable SYSTEM_TRUSTED_KEYRING
+scripts/config --disable SYSTEM_TRUSTED_KEYS
+scripts/config --disable SYSTEM_REVOCATION_KEYS
+scripts/config --disable SYSTEM_REVOCATION_LIST
+scripts/config --disable SYSTEM_BLACKLIST_KEYRING
+scripts/config --disable SYSTEM_EXTRA_CERTIFICATE
+scripts/config --disable MODULE_SIG
+scripts/config --disable MODULE_SIG_ALL
+
+
+
+grep CONFIG_SYSTEM_ .config
+
 
 
 
